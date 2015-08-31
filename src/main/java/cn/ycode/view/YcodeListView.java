@@ -4,12 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.AbsListView;
 import android.widget.ListAdapter;
-import android.widget.TextView;
 
 import com.etsy.android.grid.HeaderViewListAdapter;
 import com.etsy.android.grid.StaggeredGridView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -76,13 +73,6 @@ public class YcodeListView extends StaggeredGridView {
     public void setHasMoreItems(boolean hasMoreItems) {
         this.hasMoreItems = hasMoreItems;
         if (!this.hasMoreItems) {
-//            TextView loading = (TextView)this.loadingView.findViewById(R.id.video_item_label);
-//            loading.setText("数据加载完毕");
-//            try {
-//                Thread.sleep(300);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
             this.removeFooterView(this.loadingView);
         } else if (this.findViewById(R.id.loading_view) == null) {
             this.addFooterView(this.loadingView);
