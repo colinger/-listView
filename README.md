@@ -42,3 +42,4 @@ listView.onFinishLoading(true, newItems);
         app:column_count="1">
 </cn.ycode.view.YcodeListView>
 ```
+根据自身需求修改app:column_count="1"其中"1"表示一列.
