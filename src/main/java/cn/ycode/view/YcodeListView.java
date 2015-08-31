@@ -4,8 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.AbsListView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
+import com.etsy.android.grid.HeaderViewListAdapter;
 import com.etsy.android.grid.StaggeredGridView;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -20,6 +24,7 @@ public class YcodeListView extends StaggeredGridView {
     private boolean hasMoreItems;
     private OnLoadNextListener loadNextListener;
     private OnScrollListener onScrollListener;
+    private LoadingView loadingView;
 
     public YcodeListView(Context context) {
         super(context);
@@ -40,6 +45,9 @@ public class YcodeListView extends StaggeredGridView {
      *
      */
     private void init() {
+        this.isLoading = false;
+        this.loadingView = new LoadingView(this.getContext());
+        this.addFooterView(this.loadingView);
         super.setOnScrollListener(new OnScrollListener() {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (YcodeListView.this.onScrollListener != null) {
@@ -62,30 +70,25 @@ public class YcodeListView extends StaggeredGridView {
     }
 
     /**
-     * @param loadNextListener
+     *
+     * @param hasMoreItems
      */
-    public void setLoadNextListener(OnLoadNextListener loadNextListener) {
-        this.loadNextListener = loadNextListener;
-    }
-
-    public boolean isLoading() {
-        return this.isLoading;
-    }
-
-    public void setIsLoading(boolean isLoading) {
-        this.isLoading = isLoading;
-    }
-
-
     public void setHasMoreItems(boolean hasMoreItems) {
         this.hasMoreItems = hasMoreItems;
-//        if(!this.hasMoreItems) {
-//            this.removeFooterView(this.loadingView);
-//        } else if(this.findViewById(id.loading_view) == null) {
-//            this.addFooterView(this.loadingView);
-//            ListAdapter adapter = ((HeaderViewListAdapter)this.getAdapter()).getWrappedAdapter();
-//            this.setAdapter(adapter);
-//        }
+        if (!this.hasMoreItems) {
+//            TextView loading = (TextView)this.loadingView.findViewById(R.id.video_item_label);
+//            loading.setText("数据加载完毕");
+//            try {
+//                Thread.sleep(300);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            this.removeFooterView(this.loadingView);
+        } else if (this.findViewById(R.id.loading_view) == null) {
+            this.addFooterView(this.loadingView);
+            ListAdapter adapter = ((HeaderViewListAdapter) this.getAdapter()).getWrappedAdapter();
+            this.setAdapter(adapter);
+        }
     }
 
     /**
@@ -98,8 +101,7 @@ public class YcodeListView extends StaggeredGridView {
         this.setHasMoreItems(hasMoreItems);
         this.setIsLoading(false);
         if (newItems != null && newItems.size() > 0) {
-//            ListAdapter adapter = ((HeaderViewListAdapter) this.getAdapter()).getWrappedAdapter();
-            ListAdapter adapter = this.getAdapter();
+            ListAdapter adapter = ((HeaderViewListAdapter) this.getAdapter()).getWrappedAdapter();
             if (adapter instanceof YcodePagingBaseAdapter) {
                 ((YcodePagingBaseAdapter) adapter).addMoreItems(newItems);
             }
@@ -107,10 +109,41 @@ public class YcodeListView extends StaggeredGridView {
 
     }
 
+    /**
+     * @param loadNextListener
+     */
+    public void setLoadNextListener(OnLoadNextListener loadNextListener) {
+        this.loadNextListener = loadNextListener;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isLoading() {
+        return this.isLoading;
+    }
+
+    /**
+     *
+     * @param isLoading
+     */
+    public void setIsLoading(boolean isLoading) {
+        this.isLoading = isLoading;
+    }
+
+    /**
+     *
+     * @return
+     */
     public boolean hasMoreItems() {
         return this.hasMoreItems;
     }
 
+    /**
+     *
+     * @param onScrollListener
+     */
     @Override
     public void setOnScrollListener(OnScrollListener onScrollListener) {
         this.onScrollListener = onScrollListener;
